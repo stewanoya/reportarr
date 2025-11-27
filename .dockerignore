@@ -1,0 +1,15 @@
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/.env
+**/docker-compose*
+**/*.md
+**/Dockerfile*
+**/.dockerignore
+**/*.user
+**/*.suo
+**/.DS_Store
+**/secrets.json

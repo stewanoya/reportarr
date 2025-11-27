@@ -2,5 +2,5 @@ namespace JellyfinReporter;
 
 public interface IJellyfinReporterManager
 {
-    Task DoReportAsync();
+    Task DoReportAsync(CancellationToken cancellationToken = default);
 }

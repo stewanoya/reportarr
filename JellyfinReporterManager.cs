@@ -1,24 +1,35 @@
 namespace JellyfinReporter;
 
-public class JellyfinReporterManager(IJellyfinClient jellyfinClient, AppSettings settings, ILogger<JellyfinReporterManager> logger) : IJellyfinReporterManager
+public class JellyfinReporterManager(IJellyfinClient jellyfinClient, 
+    AppSettings settings, 
+    ILogger<JellyfinReporterManager> logger,
+    IChatBot bot,
+    IHostApplicationLifetime lifetime) : IJellyfinReporterManager
 {
     private readonly IJellyfinClient _jellyfinClient = jellyfinClient;
     private readonly AppSettings _settings = settings;
     private readonly ILogger<JellyfinReporterManager> _logger = logger;
+    private readonly IChatBot _bot = bot;
+    private readonly IHostApplicationLifetime _lifetime = lifetime;
 
-    public async Task DoReportAsync()
+    public async Task DoReportAsync(CancellationToken cancellationToken = default)
     {
-        var isHealthy = await _jellyfinClient.CheckServerHealthAsync();
-
-        if (isHealthy)
+        if (_bot.CurrentStatus() == Status.Error)
         {
-            _logger.LogInformation("Server is healthy");
-        } 
-        else
-        {
-            _logger.LogCritical("Server is unhealthy, deploying notification if enabled");    
+            _logger.LogCritical("Bot is in error status, shutting application down");
+            _lifetime.StopApplication();
+            return;
         }
 
-        await Task.Delay(_settings.HealthCheck.Interval);
+        var isHealthy = await _jellyfinClient.CheckServerHealthAsync();
+
+        if (_bot.CurrentStatus() == Status.NotReady)
+        {
+            await _bot.Init(isHealthy, cancellationToken);
+        }
+
+        await _bot.UpdateStatus(isHealthy, cancellationToken);
+
+        await Task.Delay(_settings.HealthCheck.Interval, cancellationToken);
     }
 }
