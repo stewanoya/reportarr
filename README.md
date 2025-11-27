@@ -19,3 +19,5 @@ docker run -d --name reportarr \
 ```
 
 Otherwise this service can be run using `dotnet run`, just ensure to populate appsettings with above variables.
+
+I created this to be used with my Jellyfin media server (hence the naming), but it can be used with any service that provides some kind of simple endpoint to check health. 
