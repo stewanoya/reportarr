@@ -4,11 +4,14 @@ namespace JellyfinReporter;
 
 public static class MessageTemplateHelper
 {
+    private const string _eST = "Eastern Standard Time";
+    private static readonly TimeZoneInfo _tz = TimeZoneInfo.FindSystemTimeZoneById(_eST);
     public static string GetServerStatusMessage(bool isHealthy)
     {
         var sb = new StringBuilder();
         var status = isHealthy ? "HEALTHY   🟢" : "UNHEALTHY 🔴";
-        var timestamp = DateTime.Now.ToString("ddd MMM dd hh:mm tt");
+        var nowUtc = DateTime.UtcNow;
+        var timestamp = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, _tz).ToString("ddd MMM dd hh:mm tt");
 
         sb.AppendLine("```");
         sb.AppendLine("┌─────────────────────────────────────┐");
