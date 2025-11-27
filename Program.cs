@@ -16,6 +16,7 @@ builder.Services.AddSingleton(serviceCollection => serviceCollection.GetRequired
 builder.Services.AddSingleton<IJellyfinClient, JellyfinClient>();
 builder.Services.AddSingleton<IJellyfinReporterManager, JellyfinReporterManager>();
 builder.Services.AddSingleton<IChatBot, ChatBot>();
+builder.Services.AddSingleton<IRemoteSupportManager, RemoteSupportManager>();
 
 var host = builder.Build();
 
