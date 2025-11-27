@@ -13,7 +13,7 @@ docker run -d --name reportarr \
   -e Discord__Token=token \
   -e Discord__ApplicationId=app_id \
   -e Discord__PublicKey=public_key \
-  -e Discord__ChannelId=channel_id_where_status_updates_gp \
+  -e Discord__ChannelId=channel_id_where_status_updates_go \
   -e Discord__AdminUserId=user_to_tag_with_messages \
   stewanoya/reportarr:latest
 ```
