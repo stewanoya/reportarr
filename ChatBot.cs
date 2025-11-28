@@ -58,7 +58,7 @@ public class ChatBot(AppSettings appSettings, GatewayClient client, ILogger<Chat
                     await _serverStatusMessage.PinAsync(cancellationToken: cancellationToken);
                 } else
                 {
-                    await _serverStatusMessage.ModifyAsync(i => i.Content = MessageTemplateHelper.GetServerStatusMessage(isHealthy));
+                    await _serverStatusMessage.ModifyAsync(i => i.Content = MessageTemplateHelper.GetServerStatusMessage(isHealthy), cancellationToken: cancellationToken);
                 }
             }
 
