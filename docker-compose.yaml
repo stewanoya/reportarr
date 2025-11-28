@@ -1,0 +1,19 @@
+# template to use instead of docker run command with a bajillion params
+version: "3.9"
+
+services:
+  reportarr:
+    image: stewanoya/reportarr:latest
+    container_name: reportarr
+    restart: unless-stopped
+
+    environment:
+      HealthCheck__BaseUrl: "https://example-url.ca"
+      HealthCheck__Endpoint: "health"
+      HealthCheck__Interval: "60000"
+
+      Discord__Token: "your-token"
+      Discord__ApplicationId: "your-app-id"
+      Discord__PublicKey: "your-publicKey"
+      Discord__ChannelId: "channel-id"
+      Discord__AdminUserId: "tagged-user-id"
