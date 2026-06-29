@@ -1,4 +1,8 @@
-namespace JellyfinReporter;
+using JellyfinReporter.Configuration;
+using JellyfinReporter.Discord;
+using JellyfinReporter.Health;
+
+namespace JellyfinReporter.Reporting;
 
 public class JellyfinReporterManager(IJellyfinClient jellyfinClient, 
     AppSettings settings, 

@@ -1,4 +1,4 @@
-namespace JellyfinReporter;
+namespace JellyfinReporter.Health;
 
 public interface IJellyfinClient
 {

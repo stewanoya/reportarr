@@ -1,4 +1,6 @@
-namespace JellyfinReporter;
+using JellyfinReporter.Configuration;
+
+namespace JellyfinReporter.Health;
 
 public class JellyfinClient : IJellyfinClient
 {

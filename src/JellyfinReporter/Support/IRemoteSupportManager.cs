@@ -1,4 +1,4 @@
-namespace JellyfinReporter;
+namespace JellyfinReporter.Support;
 
 public interface IRemoteSupportManager
 {

@@ -1,4 +1,4 @@
-namespace JellyfinReporter;
+namespace JellyfinReporter.Reporting;
 
 public class Worker(IJellyfinReporterManager reporter) : BackgroundService
 {

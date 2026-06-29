@@ -1,0 +1,7 @@
+namespace JellyfinReporter.MediaManager;
+
+public interface IArrClient
+{
+    ArrServiceKind Kind { get; }
+    Task<IReadOnlyList<QueueItem>> GetQueueAsync(CancellationToken cancellationToken = default);
+}

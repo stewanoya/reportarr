@@ -1,6 +1,7 @@
 using System.Diagnostics;
+using JellyfinReporter.Configuration;
 
-namespace JellyfinReporter;
+namespace JellyfinReporter.Support;
 
 public class RemoteSupportManager(ILogger<RemoteSupportManager> logger, AppSettings settings) : IRemoteSupportManager
 {

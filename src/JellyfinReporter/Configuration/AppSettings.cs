@@ -1,10 +1,14 @@
-namespace JellyfinReporter;
+using JellyfinReporter.Support;
+
+namespace JellyfinReporter.Configuration;
 
 public class AppSettings
 {
     public required HealthCheck HealthCheck { get; set; }
     public required Discord Discord { get; set; }
-    public required Support Support { get; set; }
+    public Support? Support { get; set; }
+    public SonarrConfig? Sonarr { get; set; }
+    public RadarrConfig? Radarr { get; set; }
 }
 
 public class HealthCheck
@@ -29,4 +33,20 @@ public class Support
     public string HostOs { get; set; } = "Windows";
     public RemoteSupportCommands[] AllowedCommands { get; set; } = [];
     public required string ScriptsPath { get; set; }
+}
+
+public class SonarrConfig
+{
+    public bool Enabled { get; set; } = false;
+    public required string BaseUrl { get; set; }
+    public required string ApiKey { get; set; }
+    public int RefreshInterval { get; set; } = 60_000;
+}
+
+public class RadarrConfig
+{
+    public bool Enabled { get; set; } = false;
+    public required string BaseUrl { get; set; }
+    public required string ApiKey { get; set; }
+    public int RefreshInterval { get; set; } = 60_000;
 }

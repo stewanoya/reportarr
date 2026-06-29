@@ -1,4 +1,4 @@
-namespace JellyfinReporter;
+namespace JellyfinReporter.Discord;
 
 public interface IChatBot
 {

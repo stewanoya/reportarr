@@ -15,6 +15,14 @@ docker run -d --name reportarr \
   -e Discord__PublicKey=public_key \
   -e Discord__ChannelId=channel_id_where_status_updates_go \
   -e Discord__AdminUserId=user_to_tag_with_messages \
+  -e Sonarr__Enabled=false \
+  -e Sonarr__BaseUrl=your_sonarr_url \
+  -e Sonarr__ApiKey=your_sonarr_api_key \
+  -e Sonarr__RefreshInterval=60000 \
+  -e Radarr__Enabled=false \
+  -e Radarr__BaseUrl=your_radarr_url \
+  -e Radarr__ApiKey=your_radarr_api_key \
+  -e Radarr__RefreshInterval=60000 \
   stewanoya/reportarr:latest
 ```
 

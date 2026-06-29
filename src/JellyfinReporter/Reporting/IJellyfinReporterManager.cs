@@ -1,4 +1,4 @@
-namespace JellyfinReporter;
+namespace JellyfinReporter.Reporting;
 
 public interface IJellyfinReporterManager
 {

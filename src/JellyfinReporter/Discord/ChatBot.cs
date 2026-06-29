@@ -1,8 +1,9 @@
+using JellyfinReporter.Configuration;
 using NetCord;
 using NetCord.Gateway;
 using NetCord.Rest;
 
-namespace JellyfinReporter;
+namespace JellyfinReporter.Discord;
 
 public class ChatBot(AppSettings appSettings, GatewayClient client, ILogger<ChatBot> logger) : IChatBot
 {
@@ -29,40 +30,24 @@ public class ChatBot(AppSettings appSettings, GatewayClient client, ILogger<Chat
                 _status = Status.Error;
                 return;
             }
-            
+
             _tChannel = (TextChannel)channel;
 
-            var pinnedMessages = await _tChannel.GetPinnedMessagesAsync(cancellationToken: cancellationToken);
+            var content = MessageTemplateHelper.GetServerStatusMessage(isHealthy);
+            var messageProperties = new MessageProperties() { Content = content };
 
-            if (pinnedMessages.Count == 0)
+            // Look for an existing pinned message with the health header, or
+            // adopt an orphan pinned message (legacy, starting with "```") and
+            // reformat it to the new header scheme. Otherwise create + pin new.
+            _serverStatusMessage = await PinnedMessageLocator.FindOrAdoptOrphanAsync(
+                _tChannel, MessageTemplateHelper.HealthHeader, messageProperties, cancellationToken);
+
+            if (_serverStatusMessage == null)
             {
-                var messageProperties = new MessageProperties()
-                {
-                    Content = MessageTemplateHelper.GetServerStatusMessage(isHealthy)
-                };
-
-                var message = await _tChannel.SendMessageAsync(messageProperties, cancellationToken: cancellationToken);
-                await message.PinAsync(cancellationToken: cancellationToken);
-            } else
-            {
-                _serverStatusMessage = pinnedMessages.FirstOrDefault(i => i.Content.StartsWith("```"));
-
-                if (_serverStatusMessage == null)
-                {
-                    var messageProperties = new MessageProperties()
-                    {
-                        Content = MessageTemplateHelper.GetServerStatusMessage(isHealthy)
-                    };
-
-                    _serverStatusMessage = await _tChannel.SendMessageAsync(messageProperties, cancellationToken: cancellationToken);
-                    await _serverStatusMessage.PinAsync(cancellationToken: cancellationToken);
-                } else
-                {
-                    await _serverStatusMessage.ModifyAsync(i => i.Content = MessageTemplateHelper.GetServerStatusMessage(isHealthy), cancellationToken: cancellationToken);
-                }
+                _serverStatusMessage = await _tChannel.SendMessageAsync(messageProperties, cancellationToken: cancellationToken);
+                await _serverStatusMessage.PinAsync(cancellationToken: cancellationToken);
             }
 
-            // check if pinned message exists, if not create one.
             _status = Status.Ready;
        }
         catch (Exception ex)

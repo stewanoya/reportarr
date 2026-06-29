@@ -17,3 +17,13 @@ services:
       Discord__PublicKey: "your-publicKey"
       Discord__ChannelId: "channel-id"
       Discord__AdminUserId: "tagged-user-id"
+
+      Sonarr__Enabled: "false"
+      Sonarr__BaseUrl: "https://your-sonarr-url.ca"
+      Sonarr__ApiKey: "your-sonarr-api-key"
+      Sonarr__RefreshInterval: "60000"
+
+      Radarr__Enabled: "false"
+      Radarr__BaseUrl: "https://your-radarr-url.ca"
+      Radarr__ApiKey: "your-radarr-api-key"
+      Radarr__RefreshInterval: "60000"

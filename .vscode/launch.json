@@ -6,9 +6,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "dotnet: build",
-            "program": "${workspaceFolder}/bin/Debug/net9.0/JellyfinReporter.dll",
+            "program": "${workspaceFolder}/src/JellyfinReporter/bin/Debug/net9.0/JellyfinReporter.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/src/JellyfinReporter",
             "console": "internalConsole",
             "stopAtEntry": false,
             "env": {
