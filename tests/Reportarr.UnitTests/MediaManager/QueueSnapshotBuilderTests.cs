@@ -259,4 +259,14 @@ public class QueueSnapshotBuilderTests
         Assert.Null(snapshot.Rows[0].SpeedBytesPerSec);
         Assert.False(snapshot.Rows[0].IsDownloading);
     }
+
+    [Fact]
+    public void Build_CarriesQueueItemIdToRow()
+    {
+        var item = MakeItem(42, "t", "Downloading", 1000m, 500m);
+
+        var snapshot = QueueSnapshotBuilder.Build(ArrServiceKind.Sonarr, [item], new QueueStateCache(), DateTime.UtcNow);
+
+        Assert.Equal(42, snapshot.Rows[0].Id);
+    }
 }

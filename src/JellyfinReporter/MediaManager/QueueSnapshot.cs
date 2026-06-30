@@ -27,6 +27,7 @@ public sealed class QueueSnapshot
 
 public sealed class QueueRow
 {
+    public int Id { get; init; }
     public string DisplayTitle { get; init; } = string.Empty;
     public string Status { get; init; } = string.Empty;
     public double ProgressPercent { get; init; }

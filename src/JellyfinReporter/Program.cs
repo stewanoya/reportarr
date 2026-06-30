@@ -8,6 +8,7 @@ using JellyfinReporter.Reporting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NetCord;
+using NetCord.Gateway;
 using NetCord.Hosting.Gateway;
 using NetCord.Hosting.Services.ComponentInteractions;
 using NetCord.Services.ComponentInteractions;
@@ -23,11 +24,13 @@ builder.Services.AddHttpClient();
 builder.Services.AddDiscordGateway();
 
 builder.Services.AddComponentInteractions<ButtonInteraction, ButtonInteractionContext>();
+builder.Services.AddComponentInteractions<StringMenuInteraction, StringMenuInteractionContext>();
 
 builder.Services.AddSingleton(serviceCollection => serviceCollection.GetRequiredService<IOptions<AppSettings>>().Value);
 builder.Services.AddSingleton<IJellyfinClient, JellyfinClient>();
 builder.Services.AddSingleton<IJellyfinReporterManager, JellyfinReporterManager>();
 builder.Services.AddSingleton<IChatBot, ChatBot>();
+builder.Services.AddSingleton<QueueSelectionCache>();
 
 var settings = builder.Configuration.Get<AppSettings>()
     ?? throw new InvalidOperationException("AppSettings could not be bound from configuration.");
@@ -45,14 +48,20 @@ if (settings.Sonarr?.Enabled == true || settings.Radarr?.Enabled == true)
 
 var host = builder.Build();
 
-host.AddComponentInteractionModule<QueueDmButtonModule>();
+host.AddComponentInteractionModule<ButtonInteractionContext, QueueDmButtonModule>();
+host.AddComponentInteractionModule<ButtonInteractionContext, QueueDeleteButtonModule>();
+host.AddComponentInteractionModule<StringMenuInteractionContext, QueueSelectModule>();
 
 host.Run();
 
 static void RegisterQueueMonitor(IServiceCollection services, ArrServiceKind kind, string baseUrl, string apiKey, int refreshInterval)
 {
     var serviceConfig = new ArrServiceConfig(kind, baseUrl, apiKey, refreshInterval);
-    services.AddSingleton(serviceConfig);
-    services.AddSingleton<IArrClient>(sp => new ArrClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient(), serviceConfig));
-    services.AddSingleton<IQueueMonitor, QueueMonitor>();
+    services.AddSingleton<IQueueMonitor>(sp => new QueueMonitor(
+        serviceConfig,
+        new ArrClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient(), serviceConfig),
+        sp.GetRequiredService<AppSettings>(),
+        sp.GetRequiredService<GatewayClient>(),
+        sp.GetRequiredService<ILogger<QueueMonitor>>()
+    ));
 }

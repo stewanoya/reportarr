@@ -23,7 +23,8 @@ public static class QueueSnapshotBuilder
             liveKeys.Add(key);
 
             var isDownloading = string.Equals(item.Status, "Downloading", StringComparison.OrdinalIgnoreCase);
-            var isWarning = string.Equals(item.TrackedDownloadStatus, "Warning", StringComparison.OrdinalIgnoreCase);
+            var isWarning = string.Equals(item.TrackedDownloadStatus, "Warning", StringComparison.OrdinalIgnoreCase)
+                           || string.Equals(item.Status, "Warning", StringComparison.OrdinalIgnoreCase);
             var isError = string.Equals(item.TrackedDownloadStatus, "Error", StringComparison.OrdinalIgnoreCase)
                           || string.Equals(item.Status, "Failed", StringComparison.OrdinalIgnoreCase);
 
@@ -42,6 +43,7 @@ public static class QueueSnapshotBuilder
 
             rows.Add(new QueueRow
             {
+                Id = item.Id,
                 DisplayTitle = ResolveDisplayTitle(kind, item),
                 Status = item.Status,
                 ProgressPercent = progress,

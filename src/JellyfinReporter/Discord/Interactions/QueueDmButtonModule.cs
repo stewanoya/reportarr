@@ -50,15 +50,20 @@ public class QueueDmButtonModule : ComponentInteractionModule<ButtonInteractionC
         try
         {
             var dm = await Context.User.GetDMChannelAsync();
-            foreach (var chunk in QueueTemplateHelper.RenderFullListChunks(snapshot))
-                await dm.SendMessageAsync(new MessageProperties().WithContent(chunk));
+            foreach (var chunk in QueueTemplateHelper.RenderFullListMessages(snapshot))
+            {
+                var msg = new MessageProperties { Content = chunk.Content };
+                if (chunk.Components.Count > 0)
+                    msg.Components = chunk.Components;
+                await dm.SendMessageAsync(msg);
+            }
 
-            return Ephemeral($"DM'd you the full {kind} queue.");
+            return Ephemeral("✅");
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, "Failed to DM {Kind} queue to user {UserId}: {Message}", kind, Context.User.Id, ex.Message);
-            return Ephemeral($"Couldn't send you a DM — make sure you allow direct messages from this server's members.");
+            return Ephemeral("Couldn't send you a DM — make sure you allow direct messages from this server's members.");
         }
     }
 

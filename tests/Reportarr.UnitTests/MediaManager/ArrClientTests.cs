@@ -227,6 +227,70 @@ public class ArrClientTests
         Assert.Equal(ArrServiceKind.Radarr, radarr.Kind);
     }
 
+    // ---- RemoveFromQueueAsync ----
+
+    [Fact]
+    public async Task RemoveFromQueueAsync_SendsDeleteRequestWithCorrectPathAndQuery()
+    {
+        HttpRequestMessage? captured = null;
+        var client = CreateClient(req =>
+        {
+            captured = req;
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        });
+
+        await client.RemoveFromQueueAsync(42);
+
+        Assert.NotNull(captured);
+        Assert.Equal(HttpMethod.Delete, captured!.Method);
+        var uri = captured.RequestUri!.ToString();
+        Assert.Contains("/api/v3/queue/42", uri);
+        Assert.Contains("removeFromClient=true", uri);
+        Assert.Contains("blocklist=true", uri);
+        Assert.Contains("skipRedownload=false", uri);
+    }
+
+    [Fact]
+    public async Task RemoveFromQueueAsync_SendsApiKeyHeader()
+    {
+        HttpRequestMessage? captured = null;
+        var client = CreateClient(req =>
+        {
+            captured = req;
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        });
+
+        await client.RemoveFromQueueAsync(1);
+
+        Assert.NotNull(captured);
+        Assert.True(captured!.Headers.Contains("X-Api-Key"));
+        Assert.Equal("test-api-key", captured.Headers.GetValues("X-Api-Key").First());
+    }
+
+    [Fact]
+    public async Task RemoveFromQueueAsync_NotFound_DoesNotThrow()
+    {
+        var client = CreateClient(_ => new HttpResponseMessage(HttpStatusCode.NotFound));
+
+        await client.RemoveFromQueueAsync(999);
+    }
+
+    [Fact]
+    public async Task RemoveFromQueueAsync_ServerError_Throws()
+    {
+        var client = CreateClient(_ => new HttpResponseMessage(HttpStatusCode.InternalServerError));
+
+        await Assert.ThrowsAsync<HttpRequestException>(() => client.RemoveFromQueueAsync(1));
+    }
+
+    [Fact]
+    public async Task RemoveFromQueueAsync_Unauthorized_Throws()
+    {
+        var client = CreateClient(_ => new HttpResponseMessage(HttpStatusCode.Unauthorized));
+
+        await Assert.ThrowsAsync<HttpRequestException>(() => client.RemoveFromQueueAsync(1));
+    }
+
     private sealed class StubHandler : HttpMessageHandler
     {
         private readonly Func<HttpRequestMessage, HttpResponseMessage> _responder;

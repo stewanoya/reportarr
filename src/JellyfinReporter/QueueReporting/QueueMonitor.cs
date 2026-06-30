@@ -83,14 +83,15 @@ public sealed class QueueMonitor : IQueueMonitor
         var content = QueueTemplateHelper.RenderPinnedMessage(snapshot);
         var header = QueueTemplateHelper.Header(Kind);
 
-        var components = new List<IMessageComponentProperties>
-        {
-            new ActionRowProperties([ new ButtonProperties(
-                QueueTemplateHelper.DmButtonCustomId(Kind),
-                "📥 DM me full list",
-                ButtonStyle.Primary) ])
-        };
-
+        var components = snapshot.IsOffline || snapshot.Rows.Count == 0
+            ? new List<IMessageComponentProperties>
+            {
+                new ActionRowProperties([ new ButtonProperties(
+                    QueueTemplateHelper.DmButtonCustomId(Kind),
+                    "📥 DM me full list",
+                    ButtonStyle.Primary) ])
+            }
+            : QueueTemplateHelper.BuildPinnedComponents(snapshot);
         var properties = new MessageProperties
         {
             Content = content,

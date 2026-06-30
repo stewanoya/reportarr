@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -40,5 +41,18 @@ public sealed class ArrClient : IArrClient
         var parsed = await JsonSerializer.DeserializeAsync<QueueResponse>(stream, _jsonOptions, cancellationToken);
 
         return parsed?.Records ?? [];
+    }
+
+    public async Task RemoveFromQueueAsync(int id, CancellationToken cancellationToken = default)
+    {
+        using var response = await _http.DeleteAsync(
+            $"/api/v3/queue/{id}?removeFromClient=true&blocklist=true&skipRedownload=false",
+            cancellationToken);
+
+        // 404 = item already gone (completed or removed elsewhere). Treat as success.
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return;
+
+        response.EnsureSuccessStatusCode();
     }
 }
